@@ -15,9 +15,11 @@ w = 10;
         SensorData = SimulationEngine.SensorHandler.ReadCurrentData;
         t = SensorData.t;
         
-        f = [a*sin(w*t); a*sin(w*t + pi/2)];
+        f = [a*sin(w*t); 
+             a*sin(w*t + pi/2)];
     end
 
+%Can use 'Euler', 'Taylor', 'Runge', 'Implicit Euler', 'DAE Taylor', 'DAE Runge';
 SimulationEngine.CustomSolverType = 'User-provided';
     function OutputStructure = User_provided_solver()
         
@@ -31,7 +33,6 @@ SimulationEngine.CustomSolverType = 'User-provided';
 SimulationEngine.User_provided_solver = @User_provided_solver;
 
 
-%Can use 'Euler', 'Taylor', 'Runge', 'Implicit Euler', 'DAE Taylor', 'DAE Runge';
 SimulationEngine.IC.q = SimulationEngine.IC.q + rand(3, 1)*0.5;
 % SimulationEngine.IC.v = SimulationEngine.IC.v + rand(3, 1)*0.5;
 SimulationEngine.IC.v = zeros(3, 1);
@@ -42,8 +43,8 @@ SimulationEngine.IC.v = zeros(3, 1);
 
 SimulationEngine.Time = 5;
 
-% ControlInput = SimulationEngine.GetPlugInput("Constant_ControlInput", 'value_q', SimulationEngine.IC.q);
-ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
+ControlInput = SimulationEngine.GetPlugInput("Constant_ControlInput", 'value_q', [1.2; -1; 1.2]);
+% ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
 
 
 %%%%%%%%%%%%%%%%%
