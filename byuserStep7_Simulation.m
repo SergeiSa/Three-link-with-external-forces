@@ -11,12 +11,22 @@ SimulationEngine = SRD.GetSimulationEngine();
 
 a = 10;
 w = 10;
+%     function f = GetExternalForces()
+%         SensorData = SimulationEngine.SensorHandler.ReadCurrentData;
+%         t = SensorData.t;
+%         
+%         f = [a*sin(w*t); 
+%              a*sin(w*t + pi/2)];
+%     end
     function f = GetExternalForces()
         SensorData = SimulationEngine.SensorHandler.ReadCurrentData;
         t = SensorData.t;
         
-        f = [a*sin(w*t); 
-             a*sin(w*t + pi/2)];
+        if (t > 0.3) && (t < 0.7)
+            f = [100; 100]*0;
+        else
+            f =[0; 0];
+        end
     end
 
 %Can use 'Euler', 'Taylor', 'Runge', 'Implicit Euler', 'DAE Taylor', 'DAE Runge';
@@ -39,32 +49,53 @@ SimulationEngine.IC.v = zeros(3, 1);
 
 
 %Load InverseKinematicsEngine
-% InverseKinematicsEngine = SRD.GetInverseKinematicsEngine();
+InverseKinematicsEngine = SRD.GetInverseKinematicsEngine();
 
-SimulationEngine.Time = 5;
+SimulationEngine.Time = InverseKinematicsEngine.TimeEnd - 0.0;
+% SimulationEngine.Time = 5;
 
-ControlInput = SimulationEngine.GetPlugInput("Constant_ControlInput", 'value_q', [1.2; -1; 1.2]);
+ControlInput = @InverseKinematicsEngine.EvaluatePolynomialApproximation;
+% ControlInput = SimulationEngine.GetPlugInput("Constant_ControlInput", 'value_q', [1.2; -1; 1.2]);
 % ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
 
 
 %%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%
-ControllerWrapper = SRDControllerWrapper();
+% ControllerWrapper = SRDControllerWrapper();
+% 
+% Kp = eye(SimulationEngine.dof) * 1000;
+% Kd = eye(SimulationEngine.dof) * 200;
 
-Kp = eye(SimulationEngine.dof) * 1000;
-Kd = eye(SimulationEngine.dof) * 200;
+% Kp = [1000 100 100;
+%       100 1000 100;
+%       100 100 1000];
 
-    function PDcontroller(~, ~)
-        
-        SensorData = SimulationEngine.SensorHandler.ReadCurrentData;
-        
-        e = SensorData.desired_q - SensorData.q;
-        de = SensorData.desired_v - SensorData.v;
-        
-        ControllerWrapper.u = Kp*e + Kd*de;
-    end
+%     function PDcontroller(~, ~)
+%         
+%         SensorData = SimulationEngine.SensorHandler.ReadCurrentData;
+%         
+%         e = SensorData.desired_q - SensorData.q;
+%         de = SensorData.desired_v - SensorData.v;
+%         
+%         ControllerWrapper.u = Kp*e + Kd*de;
+%     end
+% 
+% ControllerWrapper.Controller = @PDcontroller;
+% Controller = ControllerWrapper;
 
-ControllerWrapper.Controller = @PDcontroller;
+%%%%%%%%%%%%%%%%%
+%PD controller example
+Controller = SimulationEngine.GetPDcontroller('Computed torque PD', 'Kp', eye(SimulationEngine.dof)*500, ...
+                                                                    'Kd', eye(SimulationEngine.dof)*100);
+% Can use .GetPDcontroller with 'PD', 'Varying gains PD
+
+%%%%%%%%%%%%%%%%%
+% Controller = SimulationEngine.GetLQRcontroller('LQR', 'unified_Q', 10000, 'unified_R', 1, ...
+%     'ILQR_TimeStep', 0.1);
+
+%%%%%%%%%%%%%%%%%
+% Controller = SimulationEngine.GetMPcontroller('MP', 'unified_Q', 10000, 'unified_R', 1, ...
+%     'NumberOfPredictionSteps', 10, 'MP_PredictionTimeStep', 0.005);
 
 %%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%
@@ -78,7 +109,7 @@ ControllerWrapper.Controller = @PDcontroller;
 
 %Simulate
 tic
-Res = SimulationEngine.Simulation(ControlInput, ControllerWrapper);
+Res = SimulationEngine.Simulation(ControlInput, Controller);
 %Can use .Simulation() and .SimulationStateSpace()
 toc
 
@@ -92,6 +123,7 @@ end
 
 figure;
 plot(Res.SimulationOutput.Time, Res.rC);
+title('r_C')
 
 
 %Plot the output

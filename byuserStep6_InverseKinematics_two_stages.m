@@ -1,4 +1,4 @@
-function byuserStep6_InverseKinematics()
+function byuserStep6_InverseKinematics_two_stages()
 close all;
 
 %Create user interfase object for SRD
@@ -8,15 +8,15 @@ SRD = SRDuserinterface;
 InitialPosition = SRD.GetInitialPosition();
 IC_Task = g_InverseKinematics_Task(InitialPosition);
 
-ZeroOrderDerivativeNodes = {IC_Task(1), IC_Task(1)+0.4;
-                            IC_Task(2), IC_Task(2)+0.60;  
-                            IC_Task(3), IC_Task(3)}; 
-FirstOrderDerivativeNodes = {0, 0; 
-                             0, 0; 
-                             0, 0}; 
-SecondOrderDerivativeNodes = {0, 0; 
-                              0, 0; 
-                              0, 0}; 
+ZeroOrderDerivativeNodes = {IC_Task(1), IC_Task(1)+0.0,  IC_Task(1)+0.0;
+                            IC_Task(2), IC_Task(2)+0.60, IC_Task(2)+0.60;  
+                            IC_Task(3), IC_Task(3),      pi/2}; 
+FirstOrderDerivativeNodes = {0, 0, 0; 
+                             0, 0, 0; 
+                             0, 0, 0}; 
+SecondOrderDerivativeNodes = {0, 0, 0; 
+                              0, 0, 0; 
+                              0, 0, 0}; 
 
 TimeOfOneStage = 2;
 TimeEnd = (size(ZeroOrderDerivativeNodes, 2) - 1)*TimeOfOneStage;
