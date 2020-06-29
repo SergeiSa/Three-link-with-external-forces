@@ -28,8 +28,8 @@ SymbolicEngine = SRD.GetSymbolicEngine();
 ExternalForcesEngine = SRDAddExternalForces(SymbolicEngine);
 
 f = sym('f', [2, 1]);
-L = SymbolicEngine.RetreaveLinkInLinkArray("Torso");
-r = L.AbsoluteFollower;
+L = SymbolicEngine.RetreaveLinkInLinkArray("Torso"); %link where the force is applied
+r = L.AbsoluteFollower; %point where the force is applied
 J = jacobian(r, SymbolicEngine.q);
 Force = J'*[f(1); 0; f(2)];
 
