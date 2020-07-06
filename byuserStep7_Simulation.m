@@ -68,14 +68,14 @@ SimulationEngine.IC.v = zeros(3, 1);
 
 
 %Load InverseKinematicsEngine
-InverseKinematicsEngine = SRD.GetInverseKinematicsEngine();
+% % InverseKinematicsEngine = SRD.GetInverseKinematicsEngine();
+% % SimulationEngine.Time = InverseKinematicsEngine.TimeEnd - 0.0;
+% % ControlInput = @InverseKinematicsEngine.EvaluatePolynomialApproximation;
 
-SimulationEngine.Time = InverseKinematicsEngine.TimeEnd - 0.0;
-% SimulationEngine.Time = 5;
+SimulationEngine.Time = 8;
+ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
 
-ControlInput = @InverseKinematicsEngine.EvaluatePolynomialApproximation;
 % ControlInput = SimulationEngine.GetPlugInput("Constant_ControlInput", 'value_q', [1.2; -1; 1.2]);
-% ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
 
 
 %%%%%%%%%%%%%%%%%
