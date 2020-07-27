@@ -62,7 +62,8 @@ SimulationEngine.CustomSolverType = 'User-provided';
 SimulationEngine.User_provided_solver = @User_provided_solver;
 
 
-SimulationEngine.IC.q = SimulationEngine.IC.q + rand(3, 1)*0.5;
+SimulationEngine.IC.q = SRD.GetInitialPosition();
+% SimulationEngine.IC.q = SimulationEngine.IC.q + rand(3, 1)*0.5;
 % SimulationEngine.IC.v = SimulationEngine.IC.v + rand(3, 1)*0.5;
 SimulationEngine.IC.v = zeros(3, 1);
 
