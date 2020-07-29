@@ -24,3 +24,4 @@ AxisLimits = [-1; 1; -1; 1; 0; 2]; %Set axis limits for the snapshot
 ViewAngle = [0, 0];
 
 SRD.CreateRobotStructure(LinkArray, InitialPosition, AxisLimits, ViewAngle); %Create the robot
+axis equal;
