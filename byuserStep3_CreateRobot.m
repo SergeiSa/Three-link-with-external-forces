@@ -13,12 +13,12 @@ Torso = SRDLinkWithJoint('abs_pivotY', index, 'datafile_Torso', Hip,    1); inde
 
 %Set generalised coordinates; Use negative numbers to make clock-wise
 %rotations be positive
-Shin.SetUsedGenCoordinates(1);
-Hip.SetUsedGenCoordinates(2);
-Torso.SetUsedGenCoordinates(3);
+Shin.SetUsedGenCoordinates(-1);
+Hip.SetUsedGenCoordinates(-2);
+Torso.SetUsedGenCoordinates(-3);
 
 LinkArray = [Ground; Shin; Hip; Torso]; %Create array of links
-InitialPosition = [pi/4; -2*pi/3; 1*pi/5]; %Define initial position of the robot
+InitialPosition = [pi/4; pi+pi/6; 2*pi/5]; %Define initial position of the robot
 % InitialPosition = [pi/6; -pi/6; pi/6]; %Define initial position of the robot
 AxisLimits = [-1; 1; -1; 1; 0; 2]; %Set axis limits for the snapshot
 ViewAngle = [0, 0];
