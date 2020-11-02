@@ -32,11 +32,11 @@ SimulationEngine = SRD.GetSimulationEngine();
 %         end
 %     end
 
-w = 5;
-fx = 100;
-fy = 50;
-phi0 = 0;
-phi1 = pi/6;
+ w = 10;
+ fx = 10;
+ fy = 10;
+ phi0 = 0;
+ phi1 = 0*pi/180;
     function f = GetExternalForces()
         SensorData = SimulationEngine.SensorHandler.ReadCurrentData;
         t = SensorData.t;
@@ -68,13 +68,14 @@ SimulationEngine.IC.q = SRD.GetInitialPosition();
 SimulationEngine.IC.v = zeros(3, 1);
 
 
-%Load InverseKinematicsEngine
-% % InverseKinematicsEngine = SRD.GetInverseKinematicsEngine();
-% % SimulationEngine.Time = InverseKinematicsEngine.TimeEnd - 0.0;
-% % ControlInput = @InverseKinematicsEngine.EvaluatePolynomialApproximation;
+% Load InverseKinematicsEngine
+ InverseKinematicsEngine = SRD.GetInverseKinematicsEngine();
+ SimulationEngine.Time = InverseKinematicsEngine.TimeEnd - 0.0;
+ ControlInput = @InverseKinematicsEngine.EvaluatePolynomialApproximation;
 
-SimulationEngine.Time = 8;
-ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
+SimulationEngine.Time = 2;
+
+% ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
 
 % ControlInput = SimulationEngine.GetPlugInput("Constant_ControlInput", 'value_q', [1.2; -1; 1.2]);
 
@@ -105,17 +106,17 @@ ControlInput = SimulationEngine.GetPlugInput("Constant_IC_ControlInput");
 
 %%%%%%%%%%%%%%%%%
 %PD controller example
-% Controller = SimulationEngine.GetPDcontroller('Computed torque PD', 'Kp', eye(SimulationEngine.dof)*500, ...
-%                                                                     'Kd', eye(SimulationEngine.dof)*100);
+ Controller = SimulationEngine.GetPDcontroller('Computed torque PD', 'Kp', eye(SimulationEngine.dof)*50, ...
+                                                                    'Kd', eye(SimulationEngine.dof)*10);
 
 % Controller = SimulationEngine.GetPDcontroller('Varying gains PD', 'Kp', eye(SimulationEngine.dof)*500, ...
-%                                                                     'Kd', eye(SimulationEngine.dof)*100);
+%                                                                    'Kd', eye(SimulationEngine.dof)*100);
                                                                 
              % Can use .GetPDcontroller with 'PD', 'Varying gains PD
 
 %%%%%%%%%%%%%%%%%
-Controller = SimulationEngine.GetLQRcontroller('LQR', 'unified_Q', 10000, 'unified_R', 1, ...
-    'ILQR_TimeStep', 0.1);
+ % Controller = SimulationEngine.GetLQRcontroller('LQR', 'unified_Q', 10000, 'unified_R', 1, ...
+ %   'ILQR_TimeStep', 0.1);
 
 %%%%%%%%%%%%%%%%%
 % Controller = SimulationEngine.GetMPcontroller('MP', 'unified_Q', 10000, 'unified_R', 1, ...
@@ -218,8 +219,8 @@ ylabel_handle.Interpreter = 'latex';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %plot q2(t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('Color', 'w', 'Name', 'q1');
-plot(Res.SimulationOutput.Time, Res.SimulationOutput.Position(:, 1)*(180 / pi), 'LineWidth', 3);
+figure('Color', 'w', 'Name', 'q2');
+plot(Res.SimulationOutput.Time, Res.SimulationOutput.Position(:, 2)*(180 / pi), 'LineWidth', 3);
 % title('ExternalForce')
 grid on; grid minor;
 ax = gca;
@@ -239,7 +240,7 @@ ylabel_handle.Interpreter = 'latex';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %plot q3(t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('Color', 'w', 'Name', 'q1');
+figure('Color', 'w', 'Name', 'q3');
 plot(Res.SimulationOutput.Time, Res.SimulationOutput.Position(:, 3)*(180 / pi), 'LineWidth', 3);
 % title('ExternalForce')
 grid on; grid minor;
